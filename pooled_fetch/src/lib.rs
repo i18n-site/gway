@@ -31,4 +31,7 @@ impl Conn {
   pub async fn send(&mut self, req: Request<FullBytes>) -> hyper::Result<Response<Incoming>> {
     self.sender.send.send_request(req).await
   }
+  pub fn abort(&self) {
+    self.sender.conn.abort();
+  }
 }

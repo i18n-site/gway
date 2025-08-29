@@ -64,7 +64,7 @@ pub async fn http(addr: SocketAddr, req: Request<FullBytes>) -> Result<Response<
         if !(err.is_canceled() || err.is_closed()) {
           return Err(err.into());
         }
-        conn.sender.conn.abort();
+        conn.abort();
       }
     }
   }
