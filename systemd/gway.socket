@@ -1,0 +1,12 @@
+[Unit]
+Description=gway TCP socket
+
+[Socket]
+# 为 gway 提供 TCP 80 端口, 用于 HTTP/1.1 (通常重定向到 443)
+ListenStream=80
+# 为 gway 提供 TCP 443 端口, 用于 HTTP/1.1, HTTP/2
+ListenStream=443
+ReusePort=true
+
+[Install]
+WantedBy=sockets.target

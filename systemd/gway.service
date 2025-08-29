@@ -1,0 +1,27 @@
+[Unit]
+Description=gway service
+# 先启动 socket, 再启动 service
+Requires=gway.socket
+After=network.target gway.socket
+
+[Service]
+# udpgrm_activate.py 需要使用 systemd 的文件描述符存储
+Type=notify
+NotifyAccess=all
+FileDescriptorStoreMax=128
+
+# 安装 udpgrm cgroup hooks
+ExecStartPre=/usr/local/bin/udpgrm --install --self
+# 使用 udpgrm_activate.py 创建 udp socket 并放入存储, 用于 QUIC/H3
+ExecStartPre=/usr/local/bin/udpgrm_activate.py h3_port 0.0.0.0:443
+# 从 target/release 目录中启动编译好的 gway server
+# 使用 mmdecoy 来支持优雅重启
+ExecStart=/usr/local/bin/mmdecoy /opt/gway/gway
+WorkingDirectory=/opt/gway
+Restart=always
+# 仅杀死诱饵进程，停止后保留子进程
+KillMode=process
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target
