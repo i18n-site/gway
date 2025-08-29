@@ -61,10 +61,10 @@ pub async fn http(addr: SocketAddr, req: Request<FullBytes>) -> Result<Response<
         return res_body(res, addr, conn);
       }
       Err(err) => {
+        conn.abort();
         if !(err.is_canceled() || err.is_closed()) {
           return Err(err.into());
         }
-        conn.abort();
       }
     }
   }
